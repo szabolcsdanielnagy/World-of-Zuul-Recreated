@@ -65,7 +65,7 @@ public class Initializer {
 
   /** Method that creates the players. */
   public void createPlayers() {
-    player = new Player(entrance, 2);
+    player = new Player(entrance, 1,"Szabolcs");
   }
 
   /** Method that creates the NPCs. */
@@ -151,7 +151,7 @@ public class Initializer {
 
   /** Method that initializes the NPCs that were created. */
   public void initializeNpcs() {
-    dwarf.addItemToInventory(wand);
+    dwarf.pickUpItem(wand);
     ghost.setMoving(true);
   }
 
@@ -243,9 +243,9 @@ public class Initializer {
    * them that they need. They give something in exchange.
    */
   public void trade() {
-    if (dwarf.getInventory().containsKey(bread)) {
-      player.getCharacterInventory().addItemToInventory(wand);
-      dwarf.removeItemFromInventory(wand);
+    if (dwarf.getInventoryAsHashMap().containsKey(bread)) {
+      player.getInventory().addItemToInventory(wand);
+      dwarf.dropItem(wand);
     }
   }
 
@@ -268,7 +268,7 @@ public class Initializer {
   public void npcMovement() {
     for (NPC npc : npcs) {
       if (npc.isMoving()) {
-        Room location = npc.getLocation();
+        Room location = npc.getCurrentRoom();
         String possibleDirections = location.getExitString();
         HashMap<String, Room> rooms = location.getExits();
         HashMap<String, Room> possibleRooms = new HashMap<>();
@@ -283,7 +283,7 @@ public class Initializer {
          */
         List<String> keysAsArray = new ArrayList<>(possibleRooms.keySet());
         random = new Random();
-        npc.setLocation(possibleRooms.get(keysAsArray.get(random.nextInt(keysAsArray.size()))));
+        npc.setCurrentRoom(possibleRooms.get(keysAsArray.get(random.nextInt(keysAsArray.size()))));
       }
     }
   }

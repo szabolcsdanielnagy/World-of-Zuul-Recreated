@@ -1,6 +1,8 @@
 package com.company;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -12,83 +14,26 @@ import java.util.Stack;
  * @author Szabolcs D. Nagy
  * @version 21.10.2020
  */
-public class Player {
+public class Player extends Character {
 
-  private Inventory inventory;
-  private Room currentRoom;
   private Stack<Room> previousRooms;
   private int movementCount;
 
   /**
    * Constructor of the class
    *
-   * @param room default room
+   * @param currentRoom default room
    * @param inventorySize size of the inventory of the player
    */
-  public Player(Room room, int inventorySize) {
+  public Player(Room currentRoom, int inventorySize, String name) {
+    super(inventorySize,currentRoom, name);
     movementCount = 0;
-    inventory = new Inventory(inventorySize);
-    this.currentRoom = room;
     previousRooms = new Stack<>();
-  }
-
-  /**
-   * Method that returns the inventory of the player as a HashMap.
-   *
-   * @return inventory of the character
-   */
-  public HashMap<Item, Integer> characterInventory() {
-    return inventory.getInventory();
-  }
-
-  /**
-   * Method responsible for returning the inventory of the player as an Inventory object.
-   *
-   * @return inventory of the character
-   */
-  public Inventory getCharacterInventory() {
-    return inventory;
   }
 
   /** Method that prints the inventory of the player. */
   public void printInventory() {
-    inventory.printInventory();
-  }
-
-  /**
-   * Method responsible for picking up an item.
-   *
-   * @param item to be picked up
-   */
-  public void pickUpItem(Item item) {
-    inventory.addItemToInventory(item);
-  }
-
-  /**
-   * Method responsible for removing an item from the player's inventory.
-   *
-   * @param item to be dropped
-   */
-  public void dropItem(Item item) {
-    inventory.removeItemFromInventory(item);
-  }
-
-  /**
-   * Method for getting the current room of the player.
-   *
-   * @return current room of the player
-   */
-  public Room getRoom() {
-    return currentRoom;
-  }
-
-  /**
-   * Method for setting the player's current room to another room
-   *
-   * @param room next room of the player
-   */
-  public void setRoom(Room room) {
-    this.currentRoom = room;
+    getInventory().printInventory();
   }
 
   /**
@@ -114,7 +59,7 @@ public class Player {
       System.out.println("No where to go back");
       return;
     }
-    setRoom(previousRooms.pop());
+    setCurrentRoom(previousRooms.pop());
   }
 
   /**
@@ -131,5 +76,70 @@ public class Player {
    */
   public void incrementMovementCount() {
     movementCount++;
+  }
+
+  /**
+   * This command is responsible for giving an item from the players inventory to another character.
+   * The item is given to the other character iff they are in the same room.
+   *
+   * @param command the id of the item and the id of the npc
+   */
+  public void giveItem(Command command, ArrayList<NPC> npcs) {
+    if (!command.hasSecondWord()) {
+      System.out.println("Give what? (Type: give [id of item] [id of npc])");
+      return;
+    }
+    if (command.hasSecondWord() && command.hasThirdWord()) {
+      HashMap<Item, Integer> inventory = this.getInventoryAsHashMap();
+      int tmpId = Integer.parseInt(command.getThirdWord());
+      int i = 0;
+      boolean exists = false;
+      NPC npc = null;
+      while (i < npcs.size()) {
+        if (npcs.get(i).getNpcId() == tmpId) {
+          npc = npcs.get(i);
+          exists = true;
+          break;
+        } else i++;
+      }
+      if (exists) {
+        for (Map.Entry<Item, Integer> item : inventory.entrySet()) {
+          if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())
+                  && npc.getCurrentRoom().equals(this.getCurrentRoom())) {
+            this.dropItem(item.getKey());
+            npc.pickUpItem(item.getKey());
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  @Override
+  /**
+   * With this method the player can pick up an item. If the player and the item is in the same
+   * room, and they player can also carry the weight of the item it gets picked up by the player.
+   *
+   * @param command the id of the item
+   */
+  public void pickUpItem(Command command) {
+    if (!command.hasSecondWord()) {
+      System.out.println("Pickup what? (Type 'pickup [id of item]'");
+      return;
+    }
+    for (Item item : this.getCurrentRoom().listAllItemsInRoom()) {
+      if (item.getId() == Integer.parseInt(command.getSecondWord())) {
+        if (this.getInventory().canAddItemToInventory(item)) {
+          this.pickUpItem((item));
+          this.getCurrentRoom().removeItemFromRoom(item);
+          break;
+        }
+      }
+    }
+  }
+
+  @Override
+  public void pickUpItem(Item item) {
+    //
   }
 }

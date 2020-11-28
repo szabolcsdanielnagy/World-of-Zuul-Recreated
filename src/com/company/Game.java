@@ -71,7 +71,7 @@ public class Game {
     System.out.println("|__/|__/\\____/_/  /_/\\__,_/   \\____/_/       /____/\\__,_/\\__,_/_/ ");
     System.out.println("Type 'help' if you need help.");
     System.out.println();
-    System.out.println(player.getRoom().getLongDescription());
+    System.out.println(player.getCurrentRoom().getLongDescription());
   }
 
   /**
@@ -125,10 +125,10 @@ public class Game {
   /** Method for printing out the details of the current room the player is in. */
   private void printLocationInfo() {
     System.out.println("");
-    System.out.println(player.getRoom().getLongDescription());
+    System.out.println(player.getCurrentRoom().getLongDescription());
     ArrayList<NPC> npcs = initializer.getInitializedNpcs();
     for (NPC npc : npcs) {
-      if (player.getRoom().equals(npc.getLocation())) {
+      if (player.getCurrentRoom().equals(npc.getCurrentRoom())) {
         System.out.println(npc.longDescriptionOfNpc());
       }
     }
@@ -146,7 +146,7 @@ public class Game {
     }
     ArrayList<NPC> npcs = initializer.getInitializedNpcs();
     for (NPC npc : npcs) {
-      if (npc.getLocation().equals(player.getRoom())) {
+      if (npc.getCurrentRoom().equals(player.getCurrentRoom())) {
         System.out.println(npc.getInteractionMessage());
         break;
       }
@@ -165,7 +165,7 @@ public class Game {
     }
     String direction = command.getSecondWord();
     // Try to leave current room.
-    Room nextRoom = player.getRoom().getExit(direction);
+    Room nextRoom = player.getCurrentRoom().getExit(direction);
     if (nextRoom == null) {
       System.out.println("There is no door!");
     } else {
@@ -174,10 +174,10 @@ public class Game {
       if (nextRoom.isTeleport()) {
         System.out.println("You are being teleported to a room . . .");
         player.removePreviousRooms();
-        player.setRoom(initializer.randomRoom());
+        player.setCurrentRoom(initializer.randomRoom());
       } else {
-        player.addRoomsToPreviousRooms(player.getRoom());
-        player.setRoom(nextRoom);
+        player.addRoomsToPreviousRooms(player.getCurrentRoom());
+        player.setCurrentRoom(nextRoom);
       }
       printLocationInfo();
     }
@@ -190,19 +190,7 @@ public class Game {
    * @param command the id of the item
    */
   private void pickUpItem(Command command) {
-    if (!command.hasSecondWord()) {
-      System.out.println("Pickup what? (Type 'pickup [id of item]'");
-      return;
-    }
-    for (Item item : player.getRoom().listAllItemsInRoom()) {
-      if (item.getId() == Integer.parseInt(command.getSecondWord())) {
-        if (player.getCharacterInventory().canAddItemToInventory(item)) {
-          player.pickUpItem((item));
-          player.getRoom().removeItemFromRoom(item);
-          break;
-        }
-      }
-    }
+    player.pickUpItem(command);
   }
 
   /**
@@ -215,14 +203,19 @@ public class Game {
     if (!command.hasSecondWord()) {
       System.out.println("Drop what? (Type: drop [id of item])");
     }
-    for (Map.Entry<Item, Integer> item : player.characterInventory().entrySet()) {
+    for (Map.Entry<Item, Integer> item : player.getInventoryAsHashMap().entrySet()) {
       if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())) {
         System.out.println("You dropped a(n):" + item.getKey().getName());
         player.dropItem(item.getKey());
-        player.getRoom().addItemToRoom(item.getKey());
+        player.getCurrentRoom().addItemToRoom(item.getKey());
         break;
       }
     }
+  }
+
+  private void giveItem(Command command) {
+    player.giveItem(command, initializer.getInitializedNpcs());
+    initializer.trade();
   }
 
   /**
@@ -236,52 +229,13 @@ public class Game {
       System.out.println("Use what? (Type: use [id of item])");
       return;
     }
-    for (Map.Entry<Item, Integer> item : player.characterInventory().entrySet()) {
+    for (Map.Entry<Item, Integer> item : player.getInventoryAsHashMap().entrySet()) {
       if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())) {
         System.out.println("You used item ID:" + item.getKey().getId());
         System.out.println(item.getKey().getEffect());
         player.dropItem(item.getKey());
         initializer.getItems().remove(item.getKey());
         break;
-      }
-    }
-  }
-
-  /**
-   * This command is responsible for giving an item from the players inventory to another character.
-   * The item is given to the other character iff they are in the same room.
-   *
-   * @param command the id of the item and the id of the npc
-   */
-  private void giveItem(Command command) {
-    if (!command.hasSecondWord()) {
-      System.out.println("Give what? (Type: give [id of item] [id of npc])");
-      return;
-    }
-    if (command.hasSecondWord() && command.hasThirdWord()) {
-      HashMap<Item, Integer> inventory = player.characterInventory();
-      ArrayList<NPC> npcs = initializer.getInitializedNpcs();
-      int tmpId = Integer.parseInt(command.getThirdWord());
-      int i = 0;
-      boolean exists = false;
-      NPC npc = null;
-      while (i < npcs.size()) {
-        if (npcs.get(i).getNpcId() == tmpId) {
-          npc = npcs.get(i);
-          exists = true;
-          break;
-        } else i++;
-      }
-      if (exists) {
-        for (Map.Entry<Item, Integer> item : inventory.entrySet()) {
-          if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())
-              && npc.getLocation().equals(player.getRoom())) {
-            player.dropItem(item.getKey());
-            npc.addItemToInventory(item.getKey());
-            initializer.trade();
-            break;
-          }
-        }
       }
     }
   }
