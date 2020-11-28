@@ -142,4 +142,24 @@ public class Player extends Character {
   public void pickUpItem(Item item) {
     //
   }
+
+  /**
+   * This method is responsible for dropping an item from the player's inventory. Only possible if
+   * the player has the item.
+   *
+   * @param command the id of the item
+   */
+  public void dropItem(Command command) {
+    if (!command.hasSecondWord()) {
+      System.out.println("Drop what? (Type: drop [id of item])");
+    }
+    for (Map.Entry<Item, Integer> item : this.getInventoryAsHashMap().entrySet()) {
+      if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())) {
+        System.out.println("You dropped a(n):" + item.getKey().getName());
+        this.dropItem(item.getKey());
+        this.getCurrentRoom().addItemToRoom(item.getKey());
+        break;
+      }
+    }
+  }
 }

@@ -38,7 +38,7 @@ public class Game {
     printWelcome();
     // Enter the main command loop.  Here we repeatedly read commands and
     // execute them until the game is over.
-    while (!wantToQuit && !(initializer.endGameScenario())) {
+    while (!wantToQuit && !(endGameScenario())) {
       Command command = parser.getCommand();
       wantToQuit = processCommand(command);
     }
@@ -174,7 +174,7 @@ public class Game {
       if (nextRoom.isTeleport()) {
         System.out.println("You are being teleported to a room . . .");
         player.removePreviousRooms();
-        player.setCurrentRoom(initializer.randomRoom());
+        player.setCurrentRoom(initializer.getARandomRoomFromInitializedRooms());
       } else {
         player.addRoomsToPreviousRooms(player.getCurrentRoom());
         player.setCurrentRoom(nextRoom);
@@ -200,17 +200,7 @@ public class Game {
    * @param command the id of the item
    */
   private void dropItem(Command command) {
-    if (!command.hasSecondWord()) {
-      System.out.println("Drop what? (Type: drop [id of item])");
-    }
-    for (Map.Entry<Item, Integer> item : player.getInventoryAsHashMap().entrySet()) {
-      if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())) {
-        System.out.println("You dropped a(n):" + item.getKey().getName());
-        player.dropItem(item.getKey());
-        player.getCurrentRoom().addItemToRoom(item.getKey());
-        break;
-      }
-    }
+    player.dropItem(command);
   }
 
   private void giveItem(Command command) {
@@ -234,7 +224,7 @@ public class Game {
         System.out.println("You used item ID:" + item.getKey().getId());
         System.out.println(item.getKey().getEffect());
         player.dropItem(item.getKey());
-        initializer.getItems().remove(item.getKey());
+        initializer.getInitializedItems().remove(item.getKey());
         break;
       }
     }
@@ -255,5 +245,29 @@ public class Game {
 
   private void setWantToQuit(boolean wantToQuit) {
     this.wantToQuit = wantToQuit;
+  }
+
+  /**
+   * Method to get whether the game should be ended or not.
+   *
+   * @return true if the game should be ended, false otherwise
+   */
+  public boolean endGameScenario() {
+    int maxMovement = 15;
+    if (player.getMovementCount() > maxMovement) {
+      System.out.println(
+          "You have reached the maximum steps you can take, now the game will exit.");
+      return true;
+    }
+    ArrayList<Item> items = initializer.getInitializedItems();
+    boolean endGameItemUsed = false;
+    for (Item item : items) {
+      if(item.getName().equals("Wand")) {
+        endGameItemUsed = true;
+        break;
+      }
+      else endGameItemUsed = false;
+    }
+    return !(endGameItemUsed);
   }
 }

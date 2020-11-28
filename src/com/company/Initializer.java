@@ -207,7 +207,7 @@ public class Initializer {
    *
    * @return the items in the game
    */
-  public ArrayList<Item> getItems() {
+  public ArrayList<Item> getInitializedItems() {
     return items;
   }
 
@@ -233,7 +233,7 @@ public class Initializer {
    *
    * @return the random Room
    */
-  public Room randomRoom() {
+  public Room getARandomRoomFromInitializedRooms() {
     random = new Random();
     return (rooms.get(random.nextInt(rooms.size())));
   }
@@ -247,21 +247,6 @@ public class Initializer {
       player.getInventory().addItemToInventory(wand);
       dwarf.dropItem(wand);
     }
-  }
-
-  /**
-   * Method to get whether the game should be ended or not.
-   *
-   * @return true if the game should be ended, false otherwise
-   */
-  public boolean endGameScenario() {
-    int maxMovement = 30;
-    if (player.getMovementCount() > maxMovement) {
-      System.out.println(
-          "You have reached the maximum steps you can take, now the game will exit.");
-      return true;
-    }
-    return !(items.contains(wand));
   }
 
   /** This method moves the NPCs from their current room to a neighbour room */

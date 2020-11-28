@@ -18,7 +18,7 @@ public class Room {
   private final String description;
   private final HashMap<String, Room> exits; // stores exits of this room.
   private final ArrayList<Item> items;
-  private boolean isATeleporter;
+  private boolean isATeleport;
 
   /**
    * Create a room described "description". Initially, it has no exits. "description" is something
@@ -28,7 +28,7 @@ public class Room {
    */
   public Room(String description) {
     this.description = description;
-    this.isATeleporter = false;
+    this.isATeleport = false;
     this.exits = new HashMap<>();
     this.items = new ArrayList<>();
   }
@@ -110,11 +110,11 @@ public class Room {
   }
 
   public boolean isTeleport() {
-    return isATeleporter;
+    return isATeleport;
   }
 
-  public void setTeleport(boolean magical) {
-    this.isATeleporter = magical;
+  public void setTeleport(boolean teleportValue) {
+    this.isATeleport = teleportValue;
   }
 
   public HashMap<String, Room> getExits() {
