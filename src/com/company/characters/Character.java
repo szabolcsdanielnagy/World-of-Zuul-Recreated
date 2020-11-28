@@ -1,9 +1,13 @@
-package com.company;
+package com.company.characters;
+
+import com.company.Inventory;
+import com.company.Item;
+import com.company.Room;
 
 import java.util.HashMap;
 
 public abstract class Character {
-  private Inventory inventory;
+  private final Inventory inventory;
   private Room currentRoom;
   private String name;
 
@@ -69,5 +73,4 @@ public abstract class Character {
   public String getName() {
     return name;
   }
-
 }

@@ -1,5 +1,11 @@
 package com.company;
 
+import com.company.characters.NPC;
+import com.company.characters.Player;
+import com.company.commands.Command;
+import com.company.commands.CommandWord;
+import com.company.initializers.Initializer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +36,7 @@ public class Game {
   public Game() {
     initializer = new Initializer();
     parser = new Parser();
-    player = initializer.getInitializedPlayer();
+    player = initializer.getInitializedPlayer().getPlayer();
   }
 
   /** Main play routine. Loops until end of play. */
@@ -107,7 +113,9 @@ public class Game {
     commands.put(CommandWord.BACK, new Runnable[] {player::goBack, this::printLocationInfo});
     commands.put(
         CommandWord.INTERACT, new Runnable[] {() -> player.interactNpc(command, initializer)});
-    commands.put(CommandWord.GIVE, new Runnable[] {() -> player.giveItem(command, initializer)});
+    commands.put(
+        CommandWord.GIVE,
+        new Runnable[] {() -> player.giveItem(command, initializer), this::trade});
     commands.put(CommandWord.DROP, new Runnable[] {() -> player.dropItem(command)});
 
     for (Map.Entry<CommandWord, Runnable[]> element : commands.entrySet()) {
@@ -134,7 +142,7 @@ public class Game {
   public void printLocationInfo() {
     System.out.println("");
     System.out.println(player.getCurrentRoom().getLongDescription());
-    ArrayList<NPC> npcs = initializer.getInitializedNpcs();
+    ArrayList<NPC> npcs = initializer.getInitializedNpcs().getNpcs();
     for (NPC npc : npcs) {
       if (player.getCurrentRoom().equals(npc.getCurrentRoom())) {
         System.out.println(npc.longDescriptionOfNpc());
@@ -164,14 +172,14 @@ public class Game {
    *
    * @return true if the game should be ended, false otherwise
    */
-  public boolean endGameScenario() {
-    int maxMovement = 3;
+  private boolean endGameScenario() {
+    int maxMovement = 15;
     if (player.getMovementCount() > maxMovement) {
       System.out.println(
           "You have reached the maximum steps you can take, now the game will exit.");
       return true;
     }
-    ArrayList<Item> items = initializer.getInitializedItems();
+    ArrayList<Item> items = initializer.getInitializedItems().getItems();
     boolean endGameItemUsed = false;
     for (Item item : items) {
       if (item.getName().equals("Wand")) {
@@ -180,5 +188,20 @@ public class Game {
       }
     }
     return !(endGameItemUsed);
+  }
+
+  /**
+   * This method is responsible for removing an item from an NPC, if the player gives an item to
+   * them that they need. They give something in exchange.
+   */
+  public void trade() {
+    NPC dwarf = initializer.getInitializedNpcs().getNpcByName("Dwarf");
+    Item wand = initializer.getInitializedItems().getItemByName("Wand");
+    if (dwarf
+        .getInventoryAsHashMap()
+        .containsKey(initializer.getInitializedItems().getItemByName("Bread"))) {
+      player.getInventory().addItemToInventory(wand);
+      dwarf.dropItem(wand);
+    }
   }
 }

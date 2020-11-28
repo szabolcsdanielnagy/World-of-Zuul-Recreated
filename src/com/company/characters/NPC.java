@@ -1,6 +1,6 @@
-package com.company;
+package com.company.characters;
 
-import java.util.*;
+import com.company.Room;
 
 /**
  * This class is responsible for the NPCs in the game. They can have names, location they are at,
@@ -15,8 +15,8 @@ import java.util.*;
 public class NPC extends Character {
   private static int generateId = 0;
   private final int npcId;
-  private String message;
-  private String interactionMessage;
+  private final String message;
+  private final String interactionMessage;
   private boolean moving; // Determine whether an NPC moves or stays in one place
 
   /**

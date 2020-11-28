@@ -69,6 +69,7 @@ public class Inventory {
 
   /**
    * Method that returns the inventory as a HashMap.
+   *
    * @return inventory
    */
   public HashMap<Item, Integer> getInventory() {

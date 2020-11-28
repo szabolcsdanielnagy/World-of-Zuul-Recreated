@@ -1,5 +1,8 @@
 package com.company;
 
+import com.company.commands.Command;
+import com.company.commands.CommandWords;
+
 import java.util.Scanner;
 
 /**

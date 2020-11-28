@@ -1,4 +1,10 @@
-package com.company;
+package com.company.characters;
+
+import com.company.Game;
+import com.company.Item;
+import com.company.Room;
+import com.company.commands.Command;
+import com.company.initializers.Initializer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,7 +94,7 @@ public class Player extends Character {
       return;
     }
     if (command.hasSecondWord() && command.hasThirdWord()) {
-      ArrayList<NPC> npcs = initializer.getInitializedNpcs();
+      ArrayList<NPC> npcs = initializer.getInitializedNpcs().getNpcs();
       HashMap<Item, Integer> inventory = this.getInventoryAsHashMap();
       int tmpId = Integer.parseInt(command.getThirdWord());
       int i = 0;
@@ -107,7 +113,7 @@ public class Player extends Character {
               && npc.getCurrentRoom().equals(this.getCurrentRoom())) {
             this.dropItem(item.getKey());
             npc.pickUpItem(item.getKey());
-            initializer.trade();
+            // initializer.trade();
             break;
           }
         }
@@ -167,7 +173,7 @@ public class Player extends Character {
       System.out.println("Interact with whom? (Type: interact [id of npc])");
       return;
     }
-    ArrayList<NPC> npcs = initializer.getInitializedNpcs();
+    ArrayList<NPC> npcs = initializer.getInitializedNpcs().getNpcs();
     for (NPC npc : npcs) {
       if (npc.getCurrentRoom().equals(getCurrentRoom())) {
         System.out.println(npc.getInteractionMessage());
@@ -193,11 +199,12 @@ public class Player extends Character {
       System.out.println("There is no door!");
     } else {
       player.incrementMovementCount();
-      initializer.npcMovement();
+      initializer.getInitializedNpcs().npcMovement();
       if (nextRoom.isTeleport()) {
         System.out.println("You are being teleported to a room . . .");
         player.removePreviousRooms();
-        player.setCurrentRoom(initializer.getARandomRoomFromInitializedRooms());
+        player.setCurrentRoom(
+            initializer.getInitializedRooms().getARandomRoomFromInitializedRooms());
       } else {
         player.addRoomsToPreviousRooms(player.getCurrentRoom());
         player.setCurrentRoom(nextRoom);
@@ -222,7 +229,7 @@ public class Player extends Character {
         System.out.println("You used item ID:" + item.getKey().getId());
         System.out.println(item.getKey().getEffect());
         player.dropItem(item.getKey());
-        initializer.getInitializedItems().remove(item.getKey());
+        initializer.getInitializedItems().getItems().remove(item.getKey());
         break;
       }
     }

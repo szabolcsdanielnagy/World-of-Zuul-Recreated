@@ -1,4 +1,4 @@
-package com.company;
+package com.company.commands;
 
 /**
  * Representations for all the valid command words for the game along with a string in a particular
