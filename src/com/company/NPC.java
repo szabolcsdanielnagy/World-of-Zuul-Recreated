@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.*;
+
 /**
  * This class is responsible for the NPCs in the game. They can have names, location they are at,
  * inventories, messages, interaction messages and they can also move on their own if they are
@@ -86,15 +88,5 @@ public class NPC extends Character {
    */
   public void setMoving(boolean moving) {
     this.moving = moving;
-  }
-
-  @Override
-  public void pickUpItem(Item item) {
-    this.getInventory().addItemToInventory(item);
-  }
-
-  @Override
-  public void pickUpItem(Command command) {
-    //
   }
 }

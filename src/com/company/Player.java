@@ -26,7 +26,7 @@ public class Player extends Character {
    * @param inventorySize size of the inventory of the player
    */
   public Player(Room currentRoom, int inventorySize, String name) {
-    super(inventorySize,currentRoom, name);
+    super(inventorySize, currentRoom, name);
     movementCount = 0;
     previousRooms = new Stack<>();
   }
@@ -71,9 +71,7 @@ public class Player extends Character {
     return movementCount;
   }
 
-  /**
-   * Method that increases the movement of the player.
-   */
+  /** Method that increases the movement of the player. */
   public void incrementMovementCount() {
     movementCount++;
   }
@@ -84,12 +82,13 @@ public class Player extends Character {
    *
    * @param command the id of the item and the id of the npc
    */
-  public void giveItem(Command command, ArrayList<NPC> npcs) {
+  public void giveItem(Command command, Initializer initializer) {
     if (!command.hasSecondWord()) {
       System.out.println("Give what? (Type: give [id of item] [id of npc])");
       return;
     }
     if (command.hasSecondWord() && command.hasThirdWord()) {
+      ArrayList<NPC> npcs = initializer.getInitializedNpcs();
       HashMap<Item, Integer> inventory = this.getInventoryAsHashMap();
       int tmpId = Integer.parseInt(command.getThirdWord());
       int i = 0;
@@ -105,9 +104,10 @@ public class Player extends Character {
       if (exists) {
         for (Map.Entry<Item, Integer> item : inventory.entrySet()) {
           if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())
-                  && npc.getCurrentRoom().equals(this.getCurrentRoom())) {
+              && npc.getCurrentRoom().equals(this.getCurrentRoom())) {
             this.dropItem(item.getKey());
             npc.pickUpItem(item.getKey());
+            initializer.trade();
             break;
           }
         }
@@ -115,7 +115,6 @@ public class Player extends Character {
     }
   }
 
-  @Override
   /**
    * With this method the player can pick up an item. If the player and the item is in the same
    * room, and they player can also carry the weight of the item it gets picked up by the player.
@@ -138,11 +137,6 @@ public class Player extends Character {
     }
   }
 
-  @Override
-  public void pickUpItem(Item item) {
-    //
-  }
-
   /**
    * This method is responsible for dropping an item from the player's inventory. Only possible if
    * the player has the item.
@@ -158,6 +152,77 @@ public class Player extends Character {
         System.out.println("You dropped a(n):" + item.getKey().getName());
         this.dropItem(item.getKey());
         this.getCurrentRoom().addItemToRoom(item.getKey());
+        break;
+      }
+    }
+  }
+
+  /**
+   * Try to interact with an NPC if the player and the NPC are in the same room.
+   *
+   * @param command - input command the user has given.
+   */
+  public void interactNpc(Command command, Initializer initializer) {
+    if (!command.hasSecondWord()) {
+      System.out.println("Interact with whom? (Type: interact [id of npc])");
+      return;
+    }
+    ArrayList<NPC> npcs = initializer.getInitializedNpcs();
+    for (NPC npc : npcs) {
+      if (npc.getCurrentRoom().equals(getCurrentRoom())) {
+        System.out.println(npc.getInteractionMessage());
+        break;
+      }
+    }
+  }
+
+  /**
+   * Try to go in one direction. If there is an exit, enter the new room, otherwise print an error
+   * message.
+   */
+  public void goRoom(Command command, Player player, Initializer initializer, Game game) {
+    if (!command.hasSecondWord()) {
+      // no second word -> nowhere to go
+      System.out.println("Go where? (Type: go [direction])");
+      return;
+    }
+    String direction = command.getSecondWord();
+    // Try to leave current room.
+    Room nextRoom = player.getCurrentRoom().getExit(direction);
+    if (nextRoom == null) {
+      System.out.println("There is no door!");
+    } else {
+      player.incrementMovementCount();
+      initializer.npcMovement();
+      if (nextRoom.isTeleport()) {
+        System.out.println("You are being teleported to a room . . .");
+        player.removePreviousRooms();
+        player.setCurrentRoom(initializer.getARandomRoomFromInitializedRooms());
+      } else {
+        player.addRoomsToPreviousRooms(player.getCurrentRoom());
+        player.setCurrentRoom(nextRoom);
+      }
+      game.printLocationInfo();
+    }
+  }
+
+  /**
+   * With this method the player uses an item. It prints out the effect of the used item and removes
+   * it from the players inventory.
+   *
+   * @param command the id of the item
+   */
+  public void useItem(Command command, Player player, Initializer initializer) {
+    if (!command.hasSecondWord()) {
+      System.out.println("Use what? (Type: use [id of item])");
+      return;
+    }
+    for (Map.Entry<Item, Integer> item : player.getInventoryAsHashMap().entrySet()) {
+      if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())) {
+        System.out.println("You used item ID:" + item.getKey().getId());
+        System.out.println(item.getKey().getEffect());
+        player.dropItem(item.getKey());
+        initializer.getInitializedItems().remove(item.getKey());
         break;
       }
     }

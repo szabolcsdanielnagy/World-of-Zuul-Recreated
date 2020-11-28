@@ -35,6 +35,11 @@ public class Game {
 
   /** Main play routine. Loops until end of play. */
   public void play() {
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("Please enter your character's name: ");
+    String playerName = scanner.nextLine();
+    player.setName(playerName);
+    System.out.println("The name of your character is: " + playerName);
     printWelcome();
     // Enter the main command loop.  Here we repeatedly read commands and
     // execute them until the game is over.
@@ -43,7 +48,7 @@ public class Game {
       wantToQuit = processCommand(command);
     }
     System.out.println("Thank you for playing.  Do you want to play again? Type 'yes' or 'no'");
-    Scanner scanner = new Scanner(System.in);
+
     String input = scanner.nextLine();
     boolean isValid = false;
     do {
@@ -91,16 +96,19 @@ public class Game {
         new Runnable[] {() -> System.out.println("I don't know what you mean...")});
     commands.put(CommandWord.LOOK, new Runnable[] {this::printLocationInfo});
     commands.put(CommandWord.HELP, new Runnable[] {this::printHelp});
-    commands.put(CommandWord.GO, new Runnable[] {() -> goRoom(command)});
+    commands.put(
+        CommandWord.GO, new Runnable[] {() -> player.goRoom(command, player, initializer, this)});
     commands.put(
         CommandWord.QUIT, new Runnable[] {() -> quit(command), () -> setWantToQuit(quit(command))});
-    commands.put(CommandWord.PICKUP, new Runnable[] {() -> pickUpItem(command)});
+    commands.put(CommandWord.PICKUP, new Runnable[] {() -> player.pickUpItem(command)});
     commands.put(CommandWord.INVENTORY, new Runnable[] {player::printInventory});
-    commands.put(CommandWord.USE, new Runnable[] {() -> useItem(command)});
+    commands.put(
+        CommandWord.USE, new Runnable[] {() -> player.useItem(command, player, initializer)});
     commands.put(CommandWord.BACK, new Runnable[] {player::goBack, this::printLocationInfo});
-    commands.put(CommandWord.INTERACT, new Runnable[] {() -> interactNpc(command)});
-    commands.put(CommandWord.GIVE, new Runnable[] {() -> giveItem(command)});
-    commands.put(CommandWord.DROP, new Runnable[] {() -> dropItem(command)});
+    commands.put(
+        CommandWord.INTERACT, new Runnable[] {() -> player.interactNpc(command, initializer)});
+    commands.put(CommandWord.GIVE, new Runnable[] {() -> player.giveItem(command, initializer)});
+    commands.put(CommandWord.DROP, new Runnable[] {() -> player.dropItem(command)});
 
     for (Map.Entry<CommandWord, Runnable[]> element : commands.entrySet()) {
       if (element.getKey().equals(commandWord)) {
@@ -117,115 +125,19 @@ public class Game {
 
   /** Print out some help information. We print the list of the command words. */
   private void printHelp() {
-    System.out.println("You are lost in the dungeon.");
+    System.out.println(player.getName() + " you are lost in the dungeon.");
     System.out.println("The following commands might help you:");
     parser.showCommands();
   }
 
   /** Method for printing out the details of the current room the player is in. */
-  private void printLocationInfo() {
+  public void printLocationInfo() {
     System.out.println("");
     System.out.println(player.getCurrentRoom().getLongDescription());
     ArrayList<NPC> npcs = initializer.getInitializedNpcs();
     for (NPC npc : npcs) {
       if (player.getCurrentRoom().equals(npc.getCurrentRoom())) {
         System.out.println(npc.longDescriptionOfNpc());
-      }
-    }
-  }
-
-  /**
-   * Try to interact with an NPC if the player and the NPC are in the same room.
-   *
-   * @param command - input command the user has given.
-   */
-  private void interactNpc(Command command) {
-    if (!command.hasSecondWord()) {
-      System.out.println("Interact with whom? (Type: interact [id of npc])");
-      return;
-    }
-    ArrayList<NPC> npcs = initializer.getInitializedNpcs();
-    for (NPC npc : npcs) {
-      if (npc.getCurrentRoom().equals(player.getCurrentRoom())) {
-        System.out.println(npc.getInteractionMessage());
-        break;
-      }
-    }
-  }
-
-  /**
-   * Try to go in one direction. If there is an exit, enter the new room, otherwise print an error
-   * message.
-   */
-  private void goRoom(Command command) {
-    if (!command.hasSecondWord()) {
-      // no second word -> nowhere to go
-      System.out.println("Go where? (Type: go [direction])");
-      return;
-    }
-    String direction = command.getSecondWord();
-    // Try to leave current room.
-    Room nextRoom = player.getCurrentRoom().getExit(direction);
-    if (nextRoom == null) {
-      System.out.println("There is no door!");
-    } else {
-      player.incrementMovementCount();
-      initializer.npcMovement();
-      if (nextRoom.isTeleport()) {
-        System.out.println("You are being teleported to a room . . .");
-        player.removePreviousRooms();
-        player.setCurrentRoom(initializer.getARandomRoomFromInitializedRooms());
-      } else {
-        player.addRoomsToPreviousRooms(player.getCurrentRoom());
-        player.setCurrentRoom(nextRoom);
-      }
-      printLocationInfo();
-    }
-  }
-
-  /**
-   * With this method the player can pick up an item. If the player and the item is in the same
-   * room, and they player can also carry the weight of the item it gets picked up by the player.
-   *
-   * @param command the id of the item
-   */
-  private void pickUpItem(Command command) {
-    player.pickUpItem(command);
-  }
-
-  /**
-   * This method is responsible for dropping an item from the player's inventory. Only possible if
-   * the player has the item.
-   *
-   * @param command the id of the item
-   */
-  private void dropItem(Command command) {
-    player.dropItem(command);
-  }
-
-  private void giveItem(Command command) {
-    player.giveItem(command, initializer.getInitializedNpcs());
-    initializer.trade();
-  }
-
-  /**
-   * With this method the player uses an item. It prints out the effect of the used item and removes
-   * it from the players inventory.
-   *
-   * @param command the id of the item
-   */
-  private void useItem(Command command) {
-    if (!command.hasSecondWord()) {
-      System.out.println("Use what? (Type: use [id of item])");
-      return;
-    }
-    for (Map.Entry<Item, Integer> item : player.getInventoryAsHashMap().entrySet()) {
-      if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())) {
-        System.out.println("You used item ID:" + item.getKey().getId());
-        System.out.println(item.getKey().getEffect());
-        player.dropItem(item.getKey());
-        initializer.getInitializedItems().remove(item.getKey());
-        break;
       }
     }
   }
@@ -253,7 +165,7 @@ public class Game {
    * @return true if the game should be ended, false otherwise
    */
   public boolean endGameScenario() {
-    int maxMovement = 15;
+    int maxMovement = 3;
     if (player.getMovementCount() > maxMovement) {
       System.out.println(
           "You have reached the maximum steps you can take, now the game will exit.");
@@ -262,11 +174,10 @@ public class Game {
     ArrayList<Item> items = initializer.getInitializedItems();
     boolean endGameItemUsed = false;
     for (Item item : items) {
-      if(item.getName().equals("Wand")) {
+      if (item.getName().equals("Wand")) {
         endGameItemUsed = true;
         break;
       }
-      else endGameItemUsed = false;
     }
     return !(endGameItemUsed);
   }

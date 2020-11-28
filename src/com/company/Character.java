@@ -31,8 +31,9 @@ public abstract class Character {
    *
    * @param item to be picked up
    */
-  public abstract void pickUpItem(Item item) ;
-  public abstract void pickUpItem(Command command);
+  public void pickUpItem(Item item) {
+    this.getInventory().addItemToInventory(item);
+  }
 
   /**
    * Method responsible for removing an item from the inventory of the npc.
@@ -61,7 +62,12 @@ public abstract class Character {
     this.currentRoom = currentRoom;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public String getName() {
     return name;
   }
+
 }

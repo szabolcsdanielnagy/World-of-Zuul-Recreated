@@ -65,7 +65,7 @@ public class Initializer {
 
   /** Method that creates the players. */
   public void createPlayers() {
-    player = new Player(entrance, 1,"Szabolcs");
+    player = new Player(entrance, 1,"Player");
   }
 
   /** Method that creates the NPCs. */
@@ -248,8 +248,6 @@ public class Initializer {
       dwarf.dropItem(wand);
     }
   }
-
-  /** This method moves the NPCs from their current room to a neighbour room */
   public void npcMovement() {
     for (NPC npc : npcs) {
       if (npc.isMoving()) {
@@ -267,9 +265,10 @@ public class Initializer {
          * https://stackoverflow.com/questions/12385284/how-to-select-a-random-key-from-a-hashmap-in-java/12385392
          */
         List<String> keysAsArray = new ArrayList<>(possibleRooms.keySet());
-        random = new Random();
+        Random random = new Random();
         npc.setCurrentRoom(possibleRooms.get(keysAsArray.get(random.nextInt(keysAsArray.size()))));
       }
     }
   }
+
 }
