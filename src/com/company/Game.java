@@ -18,22 +18,25 @@ import java.util.Scanner;
  *
  * <p>To play this game, create an instance of this class and call the "play" method.
  *
- * <p>This main class creates the parser and starts the game. It also evaluates and executes the
- * commands that the parser returns.
+ * <p>This main class creates the parser and starts the game. It also evaluates the commands the
+ * parser returns.
  *
  * @author Michael Kölling and David J. Barnes (Modified by: Szabolcs D. Nagy)
  * @version 29.11.2020
  */
 public class Game {
-  private final Parser parser;
-  private final Initializer initializer;
-  private final Player player;
+  private Parser parser;
+  private Initializer initializer;
+  private Player player;
   private boolean wantToQuit;
 
-  /**
-   * Constructor for the Game. Creates an object of the initializer, parser and the player class.
-   */
+  /** Constructor for the Game class. Calls the startNewGame method to create the objects. */
   public Game() {
+    startNewGame();
+  }
+
+  /** Creates an object of the initializer, parser and the player. */
+  public void startNewGame() {
     initializer = new Initializer();
     parser = new Parser();
     player = initializer.getInitializedPlayer().getPlayer();
@@ -41,6 +44,8 @@ public class Game {
 
   /** Main play routine. Loops until end of play. */
   public void play() {
+    wantToQuit = false;
+    startNewGame();
     Scanner scanner = new Scanner(System.in);
     System.out.println("Please enter your character's name: ");
     String playerName = scanner.nextLine();
@@ -51,7 +56,7 @@ public class Game {
     // execute them until the game is over.
     while (!wantToQuit && !(endGameScenario())) {
       Command command = parser.getCommand();
-      wantToQuit = processCommand(command);
+      processCommand(command);
     }
     System.out.println("Thank you for playing.  Do you want to play again? Type 'yes' or 'no'");
 
@@ -91,9 +96,8 @@ public class Game {
    * https://stackoverflow.com/questions/41206630/java-8-store-method-in-hashmap-and-get-return-value-from-method-in-map/41206653
    *
    * @param command The command to be processed.
-   * @return true If the command ends the game, false otherwise.
    */
-  private boolean processCommand(Command command) {
+  private void processCommand(Command command) {
     CommandWord commandWord = command.getCommandWord();
 
     HashMap<CommandWord, Runnable[]> commands = new HashMap<>();
@@ -128,8 +132,6 @@ public class Game {
         }
       }
     }
-    // else command not recognised.
-    return wantToQuit;
   }
 
   // implementations of user commands:
