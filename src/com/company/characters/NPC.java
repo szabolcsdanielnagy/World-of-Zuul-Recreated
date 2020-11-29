@@ -3,7 +3,8 @@ package com.company.characters;
 import com.company.Room;
 
 /**
- * This class represents the NPCs in the game.
+ * This class represents the NPCs in the game. This class extends the Character class. NPCs have an
+ * ID, a message, an interaction message and a boolean whether they move or not.
  *
  * @author Szabolcs D. Nagy
  * @version 29.11.2020

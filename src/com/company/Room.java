@@ -17,7 +17,7 @@ public class Room {
   private final HashMap<String, Room> exits; // stores exits of this room.
   private final ArrayList<Item> items;
   private final String name;
-  private boolean isATeleport;
+  private boolean isTeleport;
   private boolean isLocked;
 
   /**
@@ -29,7 +29,7 @@ public class Room {
   public Room(String description, String name) {
     this.name = name;
     this.description = description;
-    this.isATeleport = false;
+    this.isTeleport = false;
     this.isLocked = false;
     this.exits = new HashMap<>();
     this.items = new ArrayList<>();
@@ -127,7 +127,7 @@ public class Room {
    * @return true if it is, false otherwise
    */
   public boolean isTeleport() {
-    return isATeleport;
+    return isTeleport;
   }
 
   /**
@@ -136,7 +136,7 @@ public class Room {
    * @param teleportValue the boolean value whether it is a teleport or not
    */
   public void setTeleport(boolean teleportValue) {
-    this.isATeleport = teleportValue;
+    this.isTeleport = teleportValue;
   }
 
   /**

@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * This class represents the Player in the game.
+ * This class represents the Player in the game. This class extends the Character class. Players
+ * have a stack of previous rooms and a movement counter. The class contains methods which are used
+ * upon typing a command in the game.
  *
  * @author Szabolcs D. Nagy
  * @version 29.11.2020
@@ -115,7 +117,6 @@ public class Player extends Character {
               && npc.getCurrentRoom().equals(this.getCurrentRoom())) {
             this.dropItem(item.getKey());
             npc.pickUpItem(item.getKey());
-            // initializer.trade();
             break;
           }
         }

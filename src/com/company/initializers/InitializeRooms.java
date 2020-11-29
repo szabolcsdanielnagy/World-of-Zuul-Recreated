@@ -21,12 +21,13 @@ public class InitializeRooms {
       graveyard,
       crypts,
       altar,
-      hole, // trapdoor
+      cell,
       upperBasement,
       cave,
       hiddenRoom,
       teleportRoom,
-      storageRoom;
+      storageRoom,
+      trapDoor;
 
   /**
    * Creates an object of the InitializeRooms class.
@@ -50,13 +51,18 @@ public class InitializeRooms {
     rooms.add(graveyard = new Room("in the graveyard", "graveyard"));
     rooms.add(crypts = new Room("in the crypts", "crypts"));
     rooms.add(altar = new Room("in the altar", "altar"));
-    rooms.add(hole = new Room("in a hole. You are trapped. You can't get out.", "hole"));
+    rooms.add(cell = new Room("in a cell.", "hole"));
     rooms.add(upperBasement = new Room("in the upper basement", "upperBasement"));
     rooms.add(cave = new Room("in the cave", "cave"));
     rooms.add(hiddenRoom = new Room("in a hidden room", "hiddenRoom"));
+    rooms.add(
+        trapDoor =
+            new Room(
+                "trapped in a hole. You can't get out unless you have a beamer or a wand",
+                "trapDoor"));
     teleportRoom = new Room("in a teleport room", "teleportRoom");
     teleportRoom.setTeleport(true);
-    hole.setLocked(true);
+    cell.setLocked(true);
   }
 
   /** Sets the exits for the rooms. */
@@ -80,7 +86,7 @@ public class InitializeRooms {
     crypts.setExit("east", altar);
 
     altar.setExit("west", crypts);
-    altar.setExit("east", hole);
+    altar.setExit("east", cell);
 
     upperBasement.setExit("down", chapel);
     upperBasement.setExit("east", cave);
@@ -91,7 +97,8 @@ public class InitializeRooms {
 
     cave.setExit("west", upperBasement);
 
-    hole.setExit("west", altar);
+    cell.setExit("west", altar);
+    cell.setExit("down", trapDoor);
   }
 
   /** Adds the items to the rooms. */

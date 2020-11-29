@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class InitializeItems {
   private ArrayList<Item> items;
-  private Item bread, wand, map, key, thorHammer;
+  private Item bread, wand, map, key, thorHammer, beamer;
   // The game has a 'Map' item. This variable holds the map of the game as a String.
   private String drawnMap;
 
@@ -36,10 +36,12 @@ public class InitializeItems {
                 "Wand",
                 "This will help you get out of the dungeon. ",
                 1,
-                "The magical wand teleported you out of the dungeon. You find yourself in a forest, you are finally free . . . "));
-    items.add(map = new Item("Map", "The map of the dungeon. Let's get out of here!", 1, drawnMap));
+                "The magical wand teleported you out of the dungeon."
+                    + " You find yourself in a forest, you are finally free . . . "));
     items.add(
-        key = new Item("Key", "This is a magical key. It can open any doors.", 1, "Door opened."));
+        map = new Item("Map", "The map of the dungeon. " + "Let's get out of here!", 1, drawnMap));
+    items.add(
+        key = new Item("Key", "This is a magical key. It can open any doors.", 1, "Key used."));
     items.add(
         thorHammer =
             new Item(
@@ -47,6 +49,15 @@ public class InitializeItems {
                 "Only the worthy can wield this hammer.",
                 999,
                 "You smashed on the ground with the hammer.")); //
+    items.add(
+        beamer =
+            new Item(
+                "Beamer",
+                "This is a beamer. "
+                    + "It can be charged and fired. If you charge it the beamer memorizes your current location."
+                    + " Upon firing it teleports you back to the location",
+                1,
+                "Beamer fired."));
   }
 
   /** Draws the map of the game for the 'Map' item. */
