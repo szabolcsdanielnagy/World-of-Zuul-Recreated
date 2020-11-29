@@ -12,24 +12,24 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * This class is responsible for the players in the game. Players have an inventory, a location and
- * a movement counter, which counts how many steps the player has taken.
- *
- * <p>This class is part of the "World of Zuul" text based adventure game.
+ * This class represents the Player in the game.
  *
  * @author Szabolcs D. Nagy
- * @version 21.10.2020
+ * @version 29.11.2020
  */
 public class Player extends Character {
 
+  // Holds the previous rooms of the character in a stack. (Used with the 'back' command)
   private Stack<Room> previousRooms;
+  // Number of moves the player has made.
   private int movementCount;
 
   /**
-   * Constructor of the class
+   * Create an object of the Player class.
    *
-   * @param currentRoom default room
-   * @param inventorySize size of the inventory of the player
+   * @param currentRoom the default room of the player
+   * @param inventorySize the size of the inventory
+   * @param name name of the player (can be changed when game starts)
    */
   public Player(Room currentRoom, int inventorySize, String name) {
     super(inventorySize, currentRoom, name);
@@ -37,28 +37,28 @@ public class Player extends Character {
     previousRooms = new Stack<>();
   }
 
-  /** Method that prints the inventory of the player. */
+  /** Prints the inventory of the character. */
   public void printInventory() {
     getInventory().printInventory();
   }
 
   /**
-   * Method that adds a room to the previous rooms of the player
+   * Adds the room to the previous rooms stack.
    *
-   * @param room room to be added
+   * @param room the room to be added
    */
-  public void addRoomsToPreviousRooms(Room room) {
+  public void addRoomToPreviousRooms(Room room) {
     this.previousRooms.push(room);
   }
 
-  /** Method that creates a new stack of the previous rooms, which also means removing them. */
-  public void removePreviousRooms() {
+  /** Clears the previous rooms stack. */
+  public void removeAllPreviousRooms() {
     this.previousRooms = new Stack<>();
   }
 
   /**
-   * Method that sets the players current room to the previous room. If there is no previous room it
-   * prints out that there is none.
+   * Sets the player's current room as the previous room. If the stack is empty it prints out that
+   * it is not possible.
    */
   public void goBack() {
     if (previousRooms.empty()) {
@@ -69,24 +69,26 @@ public class Player extends Character {
   }
 
   /**
-   * Method that returns the number of movements the player has moved.
+   * Gets the number of moves the player has made.
    *
-   * @return number of movement
+   * @return the number of moves
    */
   public int getMovementCount() {
     return movementCount;
   }
 
-  /** Method that increases the movement of the player. */
+  /** Increments the player's movement by one. */
   public void incrementMovementCount() {
     movementCount++;
   }
 
   /**
-   * This command is responsible for giving an item from the players inventory to another character.
-   * The item is given to the other character iff they are in the same room.
+   * The player tries to give an item. Reads the command. If it is valid, it removes an item from
+   * the player's inventory and adds it to the target NPC. (Only works if the player and the target
+   * NPC are in the same room.)
    *
-   * @param command the id of the item and the id of the npc
+   * @param command command to be read
+   * @param initializer initializer to get the initialized NPCs
    */
   public void giveItem(Command command, Initializer initializer) {
     if (!command.hasSecondWord()) {
@@ -122,10 +124,11 @@ public class Player extends Character {
   }
 
   /**
-   * With this method the player can pick up an item. If the player and the item is in the same
-   * room, and they player can also carry the weight of the item it gets picked up by the player.
+   * The player tries to pick up an item. Reads the command. If it is valid the player picks up the
+   * item from the ground. (Only works if the player can carry the item, which has to be in the same
+   * room as the player.)
    *
-   * @param command the id of the item
+   * @param command command to be read
    */
   public void pickUpItem(Command command) {
     if (!command.hasSecondWord()) {
@@ -144,10 +147,10 @@ public class Player extends Character {
   }
 
   /**
-   * This method is responsible for dropping an item from the player's inventory. Only possible if
-   * the player has the item.
+   * The player tries to drop an item. Reads the command. If it is valid the player drops the item
+   * on the ground. (Only works if the player has the item.)
    *
-   * @param command the id of the item
+   * @param command
    */
   public void dropItem(Command command) {
     if (!command.hasSecondWord()) {
@@ -164,9 +167,11 @@ public class Player extends Character {
   }
 
   /**
-   * Try to interact with an NPC if the player and the NPC are in the same room.
+   * The player tries to interact with an NPC. Reads the command. If the player and the NPC are in
+   * the same room the player interacts with the NPC.
    *
-   * @param command - input command the user has given.
+   * @param command command to be read
+   * @param initializer initializer to get the initialized NPCs
    */
   public void interactNpc(Command command, Initializer initializer) {
     if (!command.hasSecondWord()) {
@@ -183,8 +188,14 @@ public class Player extends Character {
   }
 
   /**
-   * Try to go in one direction. If there is an exit, enter the new room, otherwise print an error
-   * message.
+   * The player tries to go in a room. Reads the command. If it is valid and the direction is
+   * possible the player moves that way. The game prints the next location's information. Upon
+   * movement all the NPCs in the game also move.
+   *
+   * @param command command to be read
+   * @param player player to be moved
+   * @param initializer initializer to get the initialized NPCs.
+   * @param game game to print the location information
    */
   public void goRoom(Command command, Player player, Initializer initializer, Game game) {
     if (!command.hasSecondWord()) {
@@ -197,16 +208,18 @@ public class Player extends Character {
     Room nextRoom = player.getCurrentRoom().getExit(direction);
     if (nextRoom == null) {
       System.out.println("There is no door!");
+    } else if (nextRoom.isLocked()) {
+      System.out.println("The door is locked! If you have a key use it to unlock it.");
     } else {
       player.incrementMovementCount();
       initializer.getInitializedNpcs().npcMovement();
       if (nextRoom.isTeleport()) {
         System.out.println("You are being teleported to a room . . .");
-        player.removePreviousRooms();
+        player.removeAllPreviousRooms();
         player.setCurrentRoom(
             initializer.getInitializedRooms().getARandomRoomFromInitializedRooms());
       } else {
-        player.addRoomsToPreviousRooms(player.getCurrentRoom());
+        player.addRoomToPreviousRooms(player.getCurrentRoom());
         player.setCurrentRoom(nextRoom);
       }
       game.printLocationInfo();
@@ -214,10 +227,12 @@ public class Player extends Character {
   }
 
   /**
-   * With this method the player uses an item. It prints out the effect of the used item and removes
-   * it from the players inventory.
+   * The player uses an item. Reads the command. If it is valid, the player uses the item. (Only
+   * possible if the player has the item in their inventory.)
    *
-   * @param command the id of the item
+   * @param command command to be read
+   * @param player player which uses the item
+   * @param initializer initalizer to remove the item from the initialized items
    */
   public void useItem(Command command, Player player, Initializer initializer) {
     if (!command.hasSecondWord()) {

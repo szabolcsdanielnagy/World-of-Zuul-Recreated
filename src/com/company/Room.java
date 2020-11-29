@@ -7,19 +7,18 @@ import java.util.Set;
 /**
  * This class represents one location in the scenery of the game. It is connected to other rooms *
  * via exits. For each existing exit, the room stores a reference to the neighboring room. The rooms
- * have a list of items they contain.
- *
- * <p>This class is part of the "World of Zuul" text based adventure game.
+ * have a list of items they contain. Rooms can also be locked.
  *
  * @author Michael Kölling and David J. Barnes (Modified by: Szabolcs D. Nagy)
- * @version 21.11.2020
+ * @version 29.11.2020
  */
 public class Room {
   private final String description;
   private final HashMap<String, Room> exits; // stores exits of this room.
   private final ArrayList<Item> items;
-  private boolean isATeleport;
   private final String name;
+  private boolean isATeleport;
+  private boolean isLocked;
 
   /**
    * Create a room described "description". Initially, it has no exits. "description" is something
@@ -31,6 +30,7 @@ public class Room {
     this.name = name;
     this.description = description;
     this.isATeleport = false;
+    this.isLocked = false;
     this.exits = new HashMap<>();
     this.items = new ArrayList<>();
   }
@@ -95,35 +95,83 @@ public class Room {
   }
 
   /**
-   * Add the given item to the room
+   * Adds an item to the room.
    *
-   * @param name - name of the item
+   * @param name name of the item
    */
   public void addItemToRoom(Item name) {
     items.add(name);
   }
 
+  /**
+   * Removes an item from the room.
+   *
+   * @param name name of the item
+   */
   public void removeItemFromRoom(Item name) {
     items.remove(name);
   }
 
+  /**
+   * Gets all the items in the room as a list
+   *
+   * @return list of the items
+   */
   public ArrayList<Item> listAllItemsInRoom() {
     return items;
   }
 
+  /**
+   * Gets whether a room is a teleport or no.
+   *
+   * @return true if it is, false otherwise
+   */
   public boolean isTeleport() {
     return isATeleport;
   }
 
+  /**
+   * Sets the room to a teleport as the given value.
+   *
+   * @param teleportValue the boolean value whether it is a teleport or not
+   */
   public void setTeleport(boolean teleportValue) {
     this.isATeleport = teleportValue;
   }
 
+  /**
+   * Gets all the exits of a room as a HashMap.
+   *
+   * @return the exits of the room
+   */
   public HashMap<String, Room> getExits() {
     return exits;
   }
 
+  /**
+   * Gets the name of the room as a String
+   *
+   * @return the name of the room
+   */
   public String getName() {
     return name;
+  }
+
+  /**
+   * Gets whether a room is locked.
+   *
+   * @return true if it is locked, false otherwise
+   */
+  public boolean isLocked() {
+    return isLocked;
+  }
+
+  /**
+   * Sets the locked status of the room to the given value
+   *
+   * @param isLocked locked status
+   */
+  public void setLocked(boolean isLocked) {
+    this.isLocked = isLocked;
   }
 }

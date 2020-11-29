@@ -3,14 +3,10 @@ package com.company.characters;
 import com.company.Room;
 
 /**
- * This class is responsible for the NPCs in the game. They can have names, location they are at,
- * inventories, messages, interaction messages and they can also move on their own if they are
- * 'moving' NPCs.
- *
- * <p>This class is part of the "World of Zuul" text based adventure game.
+ * This class represents the NPCs in the game.
  *
  * @author Szabolcs D. Nagy
- * @version 21.10.2020
+ * @version 29.11.2020
  */
 public class NPC extends Character {
   private static int generateId = 0;
@@ -20,12 +16,13 @@ public class NPC extends Character {
   private boolean moving; // Determine whether an NPC moves or stays in one place
 
   /**
-   * Constructor of the class
+   * Create an object of the NPC class.
    *
-   * @param name name of the npc
-   * @param message default message of the npc (shown if a player enter the same room as the npc)
-   * @param interactionMessage interaction message when a player interacts with the npc
-   * @param currentRoom currentRoom of the npc
+   * @param name name of the NPC
+   * @param message message of the NPC (shown when player enters the same room as the NPC)
+   * @param interactionMessage interaction message of the NPC (shown when player interacts with the
+   *     NPC)
+   * @param currentRoom the default room of the NPC
    */
   public NPC(String name, String message, String interactionMessage, Room currentRoom) {
     super(999, currentRoom, name);
@@ -37,54 +34,54 @@ public class NPC extends Character {
   }
 
   /**
-   * Method that gets the ID of the npc.
+   * Gets the ID of an NPC.
    *
-   * @return ID of the npc.
+   * @return id of the npc
    */
   public int getNpcId() {
     return npcId;
   }
 
   /**
-   * Method that gets the interaction message of the npc.
+   * Gets the name and the interaction message of the NPC.
    *
-   * @return interaction message of the npc.
+   * @return name: interaction message
    */
   public String getInteractionMessage() {
     return getName() + ":" + interactionMessage;
   }
 
   /**
-   * Method that gets the message of the npc.
+   * Gets the message of the NPC.
    *
-   * @return message of the npc.
+   * @return message of the npc
    */
   public String getMessage() {
     return message;
   }
 
   /**
-   * Method that returns the id, name and message of the npc
+   * Gets the id, name and message of the NPC.
    *
-   * @return id, name, message
+   * @return id, name and message of the NPC as a String
    */
   public String longDescriptionOfNpc() {
     return "ID:" + getNpcId() + " " + getName() + ":" + getMessage();
   }
 
   /**
-   * Method that checks whether an npc moves automatically or not.
+   * Checks whether the NPC moves or stays in one place.
    *
-   * @return true if it is moving, false if it is not
+   * @return true if it moves, false otherwise
    */
   public boolean isMoving() {
     return moving;
   }
 
   /**
-   * Method that sets whether an npc moves or automatically or not.
+   * Sets whether the NPC moves or stays in one place.
    *
-   * @param moving true if moving, false if not moving
+   * @param moving statement whether it should move or not
    */
   public void setMoving(boolean moving) {
     this.moving = moving;

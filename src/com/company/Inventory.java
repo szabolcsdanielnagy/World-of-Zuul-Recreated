@@ -4,14 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class is responsible for the inventory system in the game. Inventories have a size and a
- * list of the items in them. Items can be added to and removed from the inventory. Items can only
- * be added if the inventory can carry them.
- *
- * <p>This class is part of the "World of Zuul" text based adventure game.
+ * This class represents the Inventory system in the game. Inventories have a size, a HashMap of the
+ * items they contain, and a current weight.
  *
  * @author Szabolcs D. Nagy
- * @version 21.10.2020
+ * @version 29.11.2020
  */
 public class Inventory {
   private final int inventorySize;
@@ -19,9 +16,9 @@ public class Inventory {
   private int currentWeightOfInventory;
 
   /**
-   * Constructor for the class
+   * Creates an object of the Inventory class.
    *
-   * @param inventorySize size of the inventory
+   * @param inventorySize the size of the inventory
    */
   public Inventory(int inventorySize) {
     items = new HashMap<>();
@@ -30,9 +27,9 @@ public class Inventory {
   }
 
   /**
-   * Method that adds an item to the inventory iff it has enough space.
+   * Adds an item to the inventory if the inventory can carry it.
    *
-   * @param item item added to the inventory
+   * @param item item to be added
    */
   public void addItemToInventory(Item item) {
     if (canAddItemToInventory(item)) {
@@ -46,7 +43,7 @@ public class Inventory {
   }
 
   /**
-   * Method that checks whether an item can be added to an inventory.
+   * Checks whether an item can be added to an inventory.
    *
    * @param item item to be added to the inventory
    * @return true if the item can be added, false if it is not possible
@@ -56,9 +53,9 @@ public class Inventory {
   }
 
   /**
-   * Method that removes an item from an inventory, iff the inventory contains the item.
+   * Removes an item from the inventory if it contains the item.
    *
-   * @param item item to be removed from the inventory
+   * @param item to be removed
    */
   public void removeItemFromInventory(Item item) {
     if (items.containsKey(item)) {
@@ -68,14 +65,15 @@ public class Inventory {
   }
 
   /**
-   * Method that returns the inventory as a HashMap.
+   * Gets the inventory as a HashMap
    *
-   * @return inventory
+   * @return the inventory+
    */
   public HashMap<Item, Integer> getInventory() {
     return items;
   }
 
+  /** Prints each item and its amount in the inventory. */
   public void printInventory() {
     if (items.isEmpty()) {
       System.out.println("Your inventory is empty!");

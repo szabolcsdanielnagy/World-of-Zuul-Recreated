@@ -6,23 +6,42 @@ import com.company.Room;
 
 import java.util.HashMap;
 
+/**
+ * This class represents the characters in the game. They have an inventory, the current room they
+ * are in and a name.
+ *
+ * @author Szabolcs D. Nagy
+ * @version 29.11.2020
+ */
 public abstract class Character {
   private final Inventory inventory;
   private Room currentRoom;
   private String name;
 
+  /**
+   * Create an object of the Character class.
+   *
+   * @param inventorySize the size of the inventory
+   * @param currentRoom the default room of the character
+   * @param name the name of the character
+   */
   public Character(int inventorySize, Room currentRoom, String name) {
     inventory = new Inventory(inventorySize);
     this.currentRoom = currentRoom;
     this.name = name;
   }
 
+  /**
+   * Gets the character's inventory as a HashMap.
+   *
+   * @return inventory of the character
+   */
   public HashMap<Item, Integer> getInventoryAsHashMap() {
     return inventory.getInventory();
   }
 
   /**
-   * Method responsible for returning the inventory of the player as an Inventory object.
+   * Gets the character's inventory as an Inventory object.
    *
    * @return inventory of the character
    */
@@ -31,46 +50,56 @@ public abstract class Character {
   }
 
   /**
-   * Method responsible for picking up an item.
+   * Adds an item to the inventory of the character.
    *
-   * @param item to be picked up
+   * @param item the item to be added
    */
   public void pickUpItem(Item item) {
     this.getInventory().addItemToInventory(item);
   }
 
   /**
-   * Method responsible for removing an item from the inventory of the npc.
+   * Removes an item from the inventory of the character.
    *
-   * @param item item to be removed
+   * @param item the item to be removed
    */
   public void dropItem(Item item) {
     inventory.removeItemFromInventory(item);
   }
 
   /**
-   * Method that gets the location of a character.
+   * Gets the current room of the character.
    *
-   * @return location of the npc
+   * @return the current room
    */
   public Room getCurrentRoom() {
     return currentRoom;
   }
 
   /**
-   * Method that sets the location of an npc.
+   * Sets the current room of the character.
    *
-   * @param currentRoom new location of the npc.
+   * @param currentRoom the room to be set as the current room
    */
   public void setCurrentRoom(Room currentRoom) {
     this.currentRoom = currentRoom;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
+  /**
+   * Gets the name of the character.
+   *
+   * @return name of the character
+   */
   public String getName() {
     return name;
+  }
+
+  /**
+   * Sets the name of the character.
+   *
+   * @param name the name to be set
+   */
+  public void setName(String name) {
+    this.name = name;
   }
 }

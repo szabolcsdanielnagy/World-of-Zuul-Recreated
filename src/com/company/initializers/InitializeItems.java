@@ -4,16 +4,26 @@ import com.company.Item;
 
 import java.util.ArrayList;
 
+/**
+ * This class initializes and creates the items which can be found in the game. It holds an
+ * ArrayList of them.
+ *
+ * @author Szabolcs D. Nagy
+ * @version 29.11.2020
+ */
 public class InitializeItems {
   private ArrayList<Item> items;
-  private Item bread, wand, map, lifeOrb, apple;
+  private Item bread, wand, map, key, thorHammer;
+  // The game has a 'Map' item. This variable holds the map of the game as a String.
   private String drawnMap;
 
+  /** Creates an object of the InitializeItems class. */
   public InitializeItems() {
     drawMap();
     createItems();
   }
 
+  /** Creates the items which can be found in the game. */
   private void createItems() {
     items = new ArrayList<>();
     items.add(
@@ -29,23 +39,22 @@ public class InitializeItems {
                 "The magical wand teleported you out of the dungeon. You find yourself in a forest, you are finally free . . . "));
     items.add(map = new Item("Map", "The map of the dungeon. Let's get out of here!", 1, drawnMap));
     items.add(
-        lifeOrb = new Item("Life orb", "This might save you in the future!", 999, "Extra health."));
+        key = new Item("Key", "This is a magical key. It can open any doors.", 1, "Door opened."));
     items.add(
-        apple =
-            new Item("Apple", "Do not try to eat it, it is cursed!", 1, "You ate the apple.")); //
+        thorHammer =
+            new Item(
+                "Thor's hammer",
+                "Only the worthy can wield this hammer.",
+                999,
+                "You smashed on the ground with the hammer.")); //
   }
 
-  /**
-   * * Method that returns the map of the game. (The game contains a "Map" item, which upon use
-   * prints * this string.)
-   *
-   * @return the map
-   */
+  /** Draws the map of the game for the 'Map' item. */
   private void drawMap() {
     drawnMap =
         ":::'######:'######:'######:'######:'######:'######:'######:'######:::"
             + "\n"
-            + "::: ##::GRAVE:::##: ##::::::::::##  ##:::ALTAR::##: ##::CASTLE::##:::"
+            + "::: ##::GRAVE:::##: ##::::::::::##  ##:::ALTAR::##: ##:::HOLE:::##:::"
             + "\n"
             + "::: ##:::YARD:::##: ##::CRYPTS::##: ##::::::::::##: ##::::::::::##:::"
             + "\n"
@@ -72,10 +81,21 @@ public class InitializeItems {
             + "::: ######:'######: ######:'######: ######:'######: ######:'######:::";
   }
 
+  /**
+   * Gets the items created in the game as an ArrayList.
+   *
+   * @return the list of the items
+   */
   public ArrayList<Item> getItems() {
     return items;
   }
 
+  /**
+   * Searches for an item in the created items by a String.
+   *
+   * @param name name of the item
+   * @return the item if the item is found, null otherwise
+   */
   public Item getItemByName(String name) {
     for (Item item : items) {
       if (item.getName().equals(name)) {

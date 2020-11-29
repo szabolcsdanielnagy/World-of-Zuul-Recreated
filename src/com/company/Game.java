@@ -22,7 +22,7 @@ import java.util.Scanner;
  * commands that the parser returns.
  *
  * @author Michael Kölling and David J. Barnes (Modified by: Szabolcs D. Nagy)
- * @version 21.20.2020
+ * @version 29.11.2020
  */
 public class Game {
   private final Parser parser;
@@ -109,13 +109,16 @@ public class Game {
     commands.put(CommandWord.PICKUP, new Runnable[] {() -> player.pickUpItem(command)});
     commands.put(CommandWord.INVENTORY, new Runnable[] {player::printInventory});
     commands.put(
-        CommandWord.USE, new Runnable[] {() -> player.useItem(command, player, initializer)});
+        CommandWord.USE,
+        new Runnable[] {() -> player.useItem(command, player, initializer), this::keyUsed});
     commands.put(CommandWord.BACK, new Runnable[] {player::goBack, this::printLocationInfo});
     commands.put(
         CommandWord.INTERACT, new Runnable[] {() -> player.interactNpc(command, initializer)});
     commands.put(
         CommandWord.GIVE,
-        new Runnable[] {() -> player.giveItem(command, initializer), this::trade});
+        new Runnable[] {
+          () -> player.giveItem(command, initializer), this::doesTheDwarfHaveTheBread
+        });
     commands.put(CommandWord.DROP, new Runnable[] {() -> player.dropItem(command)});
 
     for (Map.Entry<CommandWord, Runnable[]> element : commands.entrySet()) {
@@ -163,14 +166,19 @@ public class Game {
     return true; // signal that we want to quit
   }
 
+  /**
+   * Sets the wantToQuit to the given boolean.
+   *
+   * @param wantToQuit next value
+   */
   private void setWantToQuit(boolean wantToQuit) {
     this.wantToQuit = wantToQuit;
   }
 
   /**
-   * Method to get whether the game should be ended or not.
+   * Checks whether the game should end.
    *
-   * @return true if the game should be ended, false otherwise
+   * @return true if it should, false otherwise
    */
   private boolean endGameScenario() {
     int maxMovement = 15;
@@ -190,11 +198,8 @@ public class Game {
     return !(endGameItemUsed);
   }
 
-  /**
-   * This method is responsible for removing an item from an NPC, if the player gives an item to
-   * them that they need. They give something in exchange.
-   */
-  public void trade() {
+  /** If the player has given the bread to the dwarf, he gives the player the wand. */
+  public void doesTheDwarfHaveTheBread() {
     NPC dwarf = initializer.getInitializedNpcs().getNpcByName("Dwarf");
     Item wand = initializer.getInitializedItems().getItemByName("Wand");
     if (dwarf
@@ -202,6 +207,22 @@ public class Game {
         .containsKey(initializer.getInitializedItems().getItemByName("Bread"))) {
       player.getInventory().addItemToInventory(wand);
       dwarf.dropItem(wand);
+    }
+  }
+
+  /** Checks whether a key has been used. It unlocks a door if it has been used. */
+  public void keyUsed() {
+    Item key = initializer.getInitializedItems().getItemByName("Key");
+    if (initializer.getInitializedItems().getItems().contains(key)
+        && player.getInventoryAsHashMap().containsKey(key)) {
+      return;
+    } else {
+      HashMap<String, Room> rooms = player.getCurrentRoom().getExits();
+      for (Map.Entry<String, Room> room : rooms.entrySet()) {
+        if (room.getValue().isLocked()) {
+          room.getValue().setLocked(false);
+        }
+      }
     }
   }
 }

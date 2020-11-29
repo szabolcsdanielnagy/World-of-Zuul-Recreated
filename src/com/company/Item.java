@@ -1,13 +1,11 @@
 package com.company;
 
 /**
- * This class is responsible for the items in the game. They can have descriptions, names, effects,
- * weight and a separate id. *
- *
- * <p>This class is part of the "World of Zuul" text based adventure game.
+ * This class represents the items in the game. Items can have a description, an effect, a name, a
+ * weight and an ID.
  *
  * @author Szabolcs D. Nagy
- * @version 21.10.2020
+ * @version 29.11.2020
  */
 public class Item {
   private static int generateId = 0;
@@ -18,12 +16,12 @@ public class Item {
   private final int itemId;
 
   /**
-   * The constructor of the class.
+   * Create an object of the Item class.
    *
-   * @param name - name of the item
-   * @param description - description of the item
-   * @param weight - weight of the item
-   * @param effect - effect of the item
+   * @param name name of the item
+   * @param description description of the item
+   * @param weight weight of the item
+   * @param effect effect of the item
    */
   public Item(String name, String description, int weight, String effect) {
     generateId++;
@@ -35,69 +33,61 @@ public class Item {
   }
 
   /**
-   * Method to get the description of an item.
+   * Gets the description of an item.
    *
-   * @return the description of the item
+   * @return the description
    */
   public String getDescription() {
     return this.description;
   }
 
   /**
-   * Method to get the id of an item.
+   * Gets the ID of an item.
    *
-   * @return the id of the item
+   * @return id of the item
    */
   public int getId() {
     return itemId;
   }
 
   /**
-   * Method to get the full description of an item.
+   * Gets the full description of an item as a String.
    *
-   * @return id, name, description, weight
+   * @return full description of the item
    */
   public String getFullDescription() {
-    return "ID:"
-        + getId()
-        + " Name: "
-        + getName()
-        + " Desc: "
-        + getDescription()
-        + " (Weight: "
-        + getWeight()
-        + ")";
+    return getFullDescriptionWithoutWeight() + " (Weight: " + getWeight() + ")";
   }
 
   /**
-   * Method to get the full description of an item excluding the weight
+   * Gets the full description of an item without its weight.
    *
-   * @return id, name, description
+   * @return the full description without weight
    */
   public String getFullDescriptionWithoutWeight() {
     return "ID:" + getId() + " Name: " + getName() + " Desc: " + getDescription();
   }
 
   /**
-   * Method to get the name of an item
+   * Gets the name of an item.
    *
-   * @return name of the item
+   * @return the name of the item
    */
   public String getName() {
     return name;
   }
 
   /**
-   * Method to get the effect of an item.
+   * Gets the effect of an item.
    *
-   * @return effect of the item
+   * @return the effect of the item
    */
   public String getEffect() {
     return effect;
   }
 
   /**
-   * Method to get the weight of an item.
+   * Gets the weight of an item.
    *
    * @return weight of the item
    */

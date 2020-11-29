@@ -1,22 +1,19 @@
 package com.company.initializers;
 
 /**
- * This class creates and initializes all the rooms, players, NPCs and items. It contains a method
- * to set an end-game scenario for the game, and a method to control the movement of all the NPCs in
- * the game.
- *
- * <p>This class is part of the "World of Zuul" text based adventure game.
+ * This class represents the Initializer in the game. It creates an object for each initializer
+ * class.
  *
  * @author Szabolcs D. Nagy
- * @version 21.20.2020
+ * @version 29.11.2020
  */
 public class Initializer {
-  private InitializeRooms initializeRooms;
-  private InitializeItems initializeItems;
-  private InitializePlayer initializePlayer;
-  private InitializeNpcs initializeNpcs;
+  private final InitializeRooms initializeRooms;
+  private final InitializeItems initializeItems;
+  private final InitializePlayer initializePlayer;
+  private final InitializeNpcs initializeNpcs;
 
-  /** Constructor for the class, creates the rooms, players, items and initializes them. */
+  /** Creates an object of the Initializer class. */
   public Initializer() {
     initializeItems = new InitializeItems();
     initializeRooms = new InitializeRooms(initializeItems);
@@ -24,18 +21,38 @@ public class Initializer {
     initializePlayer = new InitializePlayer(initializeRooms);
   }
 
+  /**
+   * Gets the initialized rooms in the game.
+   *
+   * @return initialized rooms
+   */
   public InitializeRooms getInitializedRooms() {
     return initializeRooms;
   }
 
+  /**
+   * Gets the initialized items in the game.
+   *
+   * @return initialized items
+   */
   public InitializeItems getInitializedItems() {
     return initializeItems;
   }
 
+  /**
+   * Gets the initialized player in the game.
+   *
+   * @return initialized player
+   */
   public InitializePlayer getInitializedPlayer() {
     return initializePlayer;
   }
 
+  /**
+   * Gets the initialized NPCs in the game.
+   *
+   * @return initialized NPCs
+   */
   public InitializeNpcs getInitializedNpcs() {
     return initializeNpcs;
   }
