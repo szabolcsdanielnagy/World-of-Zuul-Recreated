@@ -11,6 +11,7 @@ import com.company.characters.Player;
 public class InitializePlayer {
 
   private final InitializeRooms initializeRooms;
+  private final InitializeItems initializeItems;
   private Player player;
 
   /**
@@ -18,14 +19,20 @@ public class InitializePlayer {
    *
    * @param initializeRooms initialized rooms in the game
    */
-  public InitializePlayer(InitializeRooms initializeRooms) {
+  public InitializePlayer(InitializeRooms initializeRooms, InitializeItems initializeItems) {
     this.initializeRooms = initializeRooms;
+    this.initializeItems = initializeItems;
     createPlayer();
+    setUpPlayerInventory();
   }
 
   /** Creates the player. */
   private void createPlayer() {
-    player = new Player(initializeRooms.getRoomByName("entrance"), 1, "Player");
+    player = new Player(initializeRooms.getRoomByName("entrance"), 3, "Player");
+  }
+
+  private void setUpPlayerInventory() {
+    player.getInventory().addItemToInventory(initializeItems.getItemByName("Beamer"));
   }
 
   /**

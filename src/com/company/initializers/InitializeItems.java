@@ -58,6 +58,7 @@ public class InitializeItems {
                     + " Upon firing it teleports you back to the location",
                 1,
                 "Beamer fired."));
+    beamer.setUsable(false);
   }
 
   /** Draws the map of the game for the 'Map' item. */

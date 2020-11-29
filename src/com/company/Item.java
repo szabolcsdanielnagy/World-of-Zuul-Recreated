@@ -14,6 +14,8 @@ public class Item {
   private final String name;
   private final int weight;
   private final int itemId;
+  private Room chargedRoom;
+  private boolean isUsable;
 
   /**
    * Create an object of the Item class.
@@ -25,6 +27,8 @@ public class Item {
    */
   public Item(String name, String description, int weight, String effect) {
     generateId++;
+    this.isUsable = true;
+    this.chargedRoom = null;
     this.name = name;
     this.itemId = generateId;
     this.description = description;
@@ -93,5 +97,41 @@ public class Item {
    */
   public int getWeight() {
     return weight;
+  }
+
+  /**
+   * Gets the charged room of the Beamer.
+   *
+   * @return charged room
+   */
+  public Room getChargedRoom() {
+    return chargedRoom;
+  }
+
+  /**
+   * Sets the charged room of the beamer.
+   *
+   * @param chargedRoom charged room of the beamer
+   */
+  public void setChargedRoom(Room chargedRoom) {
+    this.chargedRoom = chargedRoom;
+  }
+
+  /**
+   * Gets whether an item is usable or not.
+   *
+   * @return true if usable, false otherwise
+   */
+  public boolean isUsable() {
+    return isUsable;
+  }
+
+  /**
+   * Sets the item's usable status to the given boolean
+   *
+   * @param usable new value
+   */
+  public void setUsable(boolean usable) {
+    isUsable = usable;
   }
 }

@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class Inventory {
   private final int inventorySize;
-  private HashMap<Item, Integer> items;
+  private final HashMap<Item, Integer> items;
   private int currentWeightOfInventory;
 
   /**
@@ -21,8 +21,8 @@ public class Inventory {
    * @param inventorySize the size of the inventory
    */
   public Inventory(int inventorySize) {
-    items = new HashMap<>();
-    currentWeightOfInventory = 0;
+    this.items = new HashMap<>();
+    this.currentWeightOfInventory = 0;
     this.inventorySize = inventorySize;
   }
 

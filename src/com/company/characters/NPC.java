@@ -66,7 +66,7 @@ public class NPC extends Character {
    *
    * @return id, name and message of the NPC as a String
    */
-  public String longDescriptionOfNpc() {
+  public String getLongDescriptionOfNpc() {
     return "ID:" + getNpcId() + " " + getName() + ":" + getMessage();
   }
 

@@ -21,6 +21,8 @@ public enum CommandWord {
   GIVE("give"),
   LOOK("look"),
   DROP("drop"),
+  CHARGE("charge"),
+  FIRE("fire"),
   UNKNOWN("?");
 
   private String commandString;

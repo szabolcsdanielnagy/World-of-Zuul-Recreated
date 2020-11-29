@@ -18,7 +18,7 @@ public class Initializer {
     initializeItems = new InitializeItems();
     initializeRooms = new InitializeRooms(initializeItems);
     initializeNpcs = new InitializeNpcs(initializeRooms, initializeItems);
-    initializePlayer = new InitializePlayer(initializeRooms);
+    initializePlayer = new InitializePlayer(initializeRooms, initializeItems);
   }
 
   /**

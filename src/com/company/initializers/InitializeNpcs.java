@@ -79,8 +79,8 @@ public class InitializeNpcs {
         HashMap<String, Room> possibleRooms = new HashMap<>();
         for (Map.Entry<String, Room> room : rooms.entrySet()) {
           if (possibleDirections.contains(room.getKey())
-              && !(room.getValue().isTeleport())
-              && !(room.getValue().isLocked())) {
+              && !room.getValue().isTeleport()
+              && !room.getValue().isLocked()) {
             possibleRooms.put(room.getKey(), room.getValue());
           }
         }

@@ -115,7 +115,7 @@ public class Player extends Character {
         for (Map.Entry<Item, Integer> item : inventory.entrySet()) {
           if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())
               && npc.getCurrentRoom().equals(this.getCurrentRoom())) {
-            this.dropItem(item.getKey());
+            this.getInventory().removeItemFromInventory(item.getKey());
             npc.pickUpItem(item.getKey());
             break;
           }
@@ -138,11 +138,9 @@ public class Player extends Character {
     }
     for (Item item : this.getCurrentRoom().listAllItemsInRoom()) {
       if (item.getId() == Integer.parseInt(command.getSecondWord())) {
-        if (this.getInventory().canAddItemToInventory(item)) {
-          this.pickUpItem((item));
-          this.getCurrentRoom().removeItemFromRoom(item);
-          break;
-        }
+        this.getInventory().addItemToInventory(item);
+        this.getCurrentRoom().removeItemFromRoom(item);
+        break;
       }
     }
   }
@@ -151,7 +149,7 @@ public class Player extends Character {
    * The player tries to drop an item. Reads the command. If it is valid the player drops the item
    * on the ground. (Only works if the player has the item.)
    *
-   * @param command
+   * @param command command to be read
    */
   public void dropItem(Command command) {
     if (!command.hasSecondWord()) {
@@ -160,7 +158,7 @@ public class Player extends Character {
     for (Map.Entry<Item, Integer> item : this.getInventoryAsHashMap().entrySet()) {
       if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())) {
         System.out.println("You dropped a(n):" + item.getKey().getName());
-        this.dropItem(item.getKey());
+        this.getInventory().removeItemFromInventory(item.getKey());
         this.getCurrentRoom().addItemToRoom(item.getKey());
         break;
       }
@@ -241,12 +239,47 @@ public class Player extends Character {
       return;
     }
     for (Map.Entry<Item, Integer> item : player.getInventoryAsHashMap().entrySet()) {
-      if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())) {
+      if (item.getKey().getId() == Integer.parseInt(command.getSecondWord())
+          && item.getKey().isUsable()) {
         System.out.println("You used item ID:" + item.getKey().getId());
         System.out.println(item.getKey().getEffect());
         player.dropItem(item.getKey());
         initializer.getInitializedItems().getItems().remove(item.getKey());
         break;
+      }
+    }
+  }
+
+  /**
+   * The player charges the Beamer item. The beamer saves the current room of the player.
+   *
+   * @param command command to be read
+   * @param player player that charges the beamer
+   */
+  public void chargeBeamer(Command command, Player player) {
+    if (!command.hasSecondWord()) {
+      for (Map.Entry<Item, Integer> item : player.getInventoryAsHashMap().entrySet()) {
+        if (item.getKey().getName().equals("Beamer")) {
+          System.out.println("You charged your current room in to the beamer.");
+          item.getKey().setChargedRoom(player.getCurrentRoom());
+        }
+      }
+    }
+  }
+
+  /**
+   * The player fires the Beamer item. The beamer teleports the player back to the charged room.
+   *
+   * @param command command to be read
+   * @param player player that fires the beamer
+   */
+  public void fireBeamer(Command command, Player player) {
+    if (!command.hasSecondWord()) {
+      for (Map.Entry<Item, Integer> item : player.getInventoryAsHashMap().entrySet()) {
+        if (item.getKey().getName().equals("Beamer") && item.getKey().getChargedRoom() != null) {
+          System.out.println("You fired the beamer.");
+          player.setCurrentRoom(item.getKey().getChargedRoom());
+        }
       }
     }
   }

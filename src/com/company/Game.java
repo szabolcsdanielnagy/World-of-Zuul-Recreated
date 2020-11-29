@@ -124,6 +124,10 @@ public class Game {
           () -> player.giveItem(command, initializer), this::doesTheDwarfHaveTheBread
         });
     commands.put(CommandWord.DROP, new Runnable[] {() -> player.dropItem(command)});
+    commands.put(
+        CommandWord.FIRE,
+        new Runnable[] {() -> player.fireBeamer(command, player), this::printLocationInfo});
+    commands.put(CommandWord.CHARGE, new Runnable[] {() -> player.chargeBeamer(command, player)});
 
     for (Map.Entry<CommandWord, Runnable[]> element : commands.entrySet()) {
       if (element.getKey().equals(commandWord)) {
@@ -150,7 +154,7 @@ public class Game {
     ArrayList<NPC> npcs = initializer.getInitializedNpcs().getNpcs();
     for (NPC npc : npcs) {
       if (player.getCurrentRoom().equals(npc.getCurrentRoom())) {
-        System.out.println(npc.longDescriptionOfNpc());
+        System.out.println(npc.getLongDescriptionOfNpc());
       }
     }
   }
@@ -169,12 +173,12 @@ public class Game {
   }
 
   /**
-   * Sets the wantToQuit to the given boolean.
+   * Sets the status to the given boolean.
    *
-   * @param wantToQuit next value
+   * @param status next value
    */
-  private void setWantToQuit(boolean wantToQuit) {
-    this.wantToQuit = wantToQuit;
+  private void setWantToQuit(boolean status) {
+    this.wantToQuit = status;
   }
 
   /**
@@ -190,14 +194,14 @@ public class Game {
       return true;
     }
     ArrayList<Item> items = initializer.getInitializedItems().getItems();
-    boolean endGameItemUsed = false;
+    boolean endGameItemUsed = true;
     for (Item item : items) {
       if (item.getName().equals("Wand")) {
-        endGameItemUsed = true;
+        endGameItemUsed = false;
         break;
       }
     }
-    return !(endGameItemUsed);
+    return endGameItemUsed;
   }
 
   /** If the player has given the bread to the dwarf, he gives the player the wand. */
@@ -215,10 +219,8 @@ public class Game {
   /** Checks whether a key has been used. It unlocks a door if it has been used. */
   public void keyUsed() {
     Item key = initializer.getInitializedItems().getItemByName("Key");
-    if (initializer.getInitializedItems().getItems().contains(key)
-        && player.getInventoryAsHashMap().containsKey(key)) {
-      return;
-    } else {
+    if (!initializer.getInitializedItems().getItems().contains(key)
+        && !player.getInventoryAsHashMap().containsKey(key)) {
       HashMap<String, Room> rooms = player.getCurrentRoom().getExits();
       for (Map.Entry<String, Room> room : rooms.entrySet()) {
         if (room.getValue().isLocked()) {
