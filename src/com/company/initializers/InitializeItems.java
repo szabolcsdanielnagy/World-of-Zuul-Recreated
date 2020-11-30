@@ -57,7 +57,7 @@ public class InitializeItems {
                     + "It can be charged and fired. If you charge it the beamer memorizes your current location."
                     + " Upon firing it teleports you back to the location",
                 1,
-                "Beamer fired."));
+                "Beamer used."));
     beamer.setUsable(false);
   }
 

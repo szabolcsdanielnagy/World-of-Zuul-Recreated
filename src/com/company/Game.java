@@ -6,10 +6,7 @@ import com.company.commands.Command;
 import com.company.commands.CommandWord;
 import com.company.initializers.Initializer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * This class is the main class of the "World of Zuul" text based adventure game. The player can
@@ -129,13 +126,11 @@ public class Game {
         new Runnable[] {() -> player.fireBeamer(command, player), this::printLocationInfo});
     commands.put(CommandWord.CHARGE, new Runnable[] {() -> player.chargeBeamer(command, player)});
 
-    for (Map.Entry<CommandWord, Runnable[]> element : commands.entrySet()) {
-      if (element.getKey().equals(commandWord)) {
-        for (int i = 0; i < element.getValue().length; i++) {
-          element.getValue()[i].run();
-        }
-      }
-    }
+    commands.entrySet().stream()
+        .filter(entry -> entry.getKey().equals(commandWord))
+        .forEach(
+            commandWordEntry ->
+                Arrays.stream(commandWordEntry.getValue()).distinct().forEach(Runnable::run));
   }
 
   // implementations of user commands:
