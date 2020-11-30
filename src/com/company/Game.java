@@ -5,7 +5,6 @@ import com.company.characters.Player;
 import com.company.commands.Command;
 import com.company.commands.CommandWord;
 import com.company.initializers.Initializer;
-import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.*;
 
@@ -136,7 +135,7 @@ public class Game {
         .filter(entry -> entry.getKey().equals(commandWord))
         .forEach(
             commandWordEntry ->
-                Arrays.stream(commandWordEntry.getValue()).distinct().forEach(Runnable::run));
+                Arrays.stream(commandWordEntry.getValue()).forEach(Runnable::run));
   }
 
   // implementations of user commands:
