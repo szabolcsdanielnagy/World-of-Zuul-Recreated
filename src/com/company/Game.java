@@ -5,6 +5,7 @@ import com.company.characters.Player;
 import com.company.commands.Command;
 import com.company.commands.CommandWord;
 import com.company.initializers.Initializer;
+import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.*;
 
@@ -53,7 +54,12 @@ public class Game {
     // execute them until the game is over.
     while (!wantToQuit && !(endGameScenario())) {
       Command command = parser.getCommand();
+      try{
       processCommand(command);
+      }
+      catch(NullPointerException | NumberFormatException e) {
+        System.out.println("Command not properly used.");
+      }
     }
     System.out.println("Thank you for playing.  Do you want to play again? Type 'yes' or 'no'");
 
