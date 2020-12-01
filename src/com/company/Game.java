@@ -152,11 +152,9 @@ public class Game {
     System.out.println("");
     System.out.println(player.getCurrentRoom().getLongDescription());
     ArrayList<NPC> npcs = initializer.getInitializedNpcs().getNpcs();
-    for (NPC npc : npcs) {
-      if (player.getCurrentRoom().equals(npc.getCurrentRoom())) {
-        System.out.println(npc.getLongDescriptionOfNpc());
-      }
-    }
+    npcs.stream()
+        .filter(npc -> npc.getCurrentRoom().equals(player.getCurrentRoom()))
+        .forEach(npc -> System.out.println(npc.getLongDescriptionOfNpc()));
   }
 
   /**
