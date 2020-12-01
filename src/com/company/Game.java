@@ -26,6 +26,7 @@ public class Game {
   private Initializer initializer;
   private Player player;
   private boolean wantToQuit;
+  private int maxMovementAllowed;
 
   /** Constructor for the Game class. Calls the startNewGame method to create the objects. */
   public Game() {
@@ -33,7 +34,9 @@ public class Game {
   }
 
   /** Creates an object of the initializer, parser and the player. */
-  public void startNewGame() {
+  private void startNewGame() {
+    Random rnd = new Random();
+    maxMovementAllowed = 10 + rnd.nextInt(7);
     initializer = new Initializer();
     parser = new Parser();
     player = initializer.getInitializedPlayer().getPlayer();
@@ -185,8 +188,7 @@ public class Game {
    * @return true if it should, false otherwise
    */
   private boolean endGameScenario() {
-    int maxMovement = 15;
-    if (player.getMovementCount() > maxMovement) {
+    if (player.getMovementCount() > maxMovementAllowed) {
       System.out.println(
           "You have reached the maximum steps you can take, now the game will exit.");
       return true;
@@ -203,7 +205,7 @@ public class Game {
   }
 
   /** If the player has given the bread to the dwarf, he gives the player the wand. */
-  public void doesTheDwarfHaveTheBread() {
+  private void doesTheDwarfHaveTheBread() {
     NPC dwarf = initializer.getInitializedNpcs().getNpcByName("Dwarf");
     Item wand = initializer.getInitializedItems().getItemByName("Wand");
     if (dwarf
@@ -215,7 +217,7 @@ public class Game {
   }
 
   /** Checks whether a key has been used. It unlocks a door if it has been used. */
-  public void keyUsed() {
+  private void keyUsed() {
     Item key = initializer.getInitializedItems().getItemByName("Key");
     if (!initializer.getInitializedItems().getItems().contains(key)
         && !player.getInventoryAsHashMap().containsKey(key)) {
@@ -227,4 +229,6 @@ public class Game {
       }
     }
   }
+
+
 }
