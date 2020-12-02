@@ -7,13 +7,13 @@ import com.company.Room;
 import java.util.HashMap;
 
 /**
- * This abstract class represents the characters in the game. They have an inventory, the current
- * room they are in and a name.
+ * This class represents the characters in the game. They have an inventory, the current room they
+ * are in and a name.
  *
  * @author Szabolcs D. Nagy
  * @version 29.11.2020
  */
-public abstract class Character {
+public class Character {
   private final Inventory inventory;
   private Room currentRoom;
   private String name;
