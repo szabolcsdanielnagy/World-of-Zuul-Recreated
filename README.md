@@ -1,6 +1,4 @@
-# world-of-zuul
-**4CCS1PPA Programming Practice and Applications (20-21-000001)**
-
+# Text-based-game project
 **Assignment #2 – World of Zuul**
 
 Title: World of Zuul
@@ -76,7 +74,9 @@ When the game is started the player must enter the name of their character. Writ
 - go east
 - give [id of bread] [id of dwarf]
 - inventory
-- use [id of wand] Sources:
+- use [id of wand]
+
+#Sources:
 - Objects First with Java (6th Edition)
 - [www.stackoverflow.com](http://www.stackoverflow.com/)(Used code from this website is listed in the code)
 - FIGLET Generator (for drawing the map and the welcome message of the program)
