@@ -1,13 +1,8 @@
 # Text-based-game project
-**Assignment #2 – World of Zuul**
 
 Title: World of Zuul
 
 Author: Szabolcs Daniel Nagy
-
-Student number: 20073246
-
-Due Date: 02/12/2020
 
 I did not change the original name of the game; it remained the same. My game was built on the second example given. The player finds himself lost in a dungeon, and he must find a way out. In the adventure the player can interact with other characters, obtain powerful and interesting items, also use them. The main objective of the game is to get out of the dungeon, which can be done by finding the bread in the dungeon. After giving the bread to the dwarf, he gives a wand in exchange, which upon use teleports you out of the dungeon. Implemented features which I am proud of:
 
